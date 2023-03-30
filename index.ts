@@ -11,18 +11,21 @@ app.use(cors({
   origin: 'http://localhost:3000',
 }));
 
-let refreshTokens:string[] = [];
+// let refreshTokens:string[] = [];
 
-app.post("/api/refresh", (req, res) => {
-  //take the refresh token from the user
+app.post("/api/refresh", async(req, res) => {
   const refreshToken = req.body.token;
-  
-  //send error if there is no token or it's invalid
+  const userId = req.body.userId;
+
+  let refreshTokens:any[] = await AuthRecord.refreshTokens(userId)
+  console.log('refreshTokens' + refreshTokens)
+
   if (!refreshToken) return res.status(401).json("You are not authenticated!");
 
   if (!refreshTokens.includes(refreshToken)) {
     return res.status(403).json("Refresh token is not valid!");
   }
+
   jwt.verify(refreshToken, "myRefreshSecretKey", (err:any, user: any) => {
     err && console.log(err);
     refreshTokens = refreshTokens.filter((token:string) => token !== refreshToken);
@@ -30,7 +33,7 @@ app.post("/api/refresh", (req, res) => {
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
 
-    refreshTokens.push(newRefreshToken);
+    // refreshTokens.push(newRefreshToken);
 
     res.status(200).json({
       accessToken: newAccessToken,
@@ -42,9 +45,14 @@ app.post("/api/refresh", (req, res) => {
 });
 
 const generateAccessToken = async(user:any) => {
-  const token =  jwt.sign({ id: user}, "mySecretKey", {
+   return jwt.sign({ id: user}, "mySecretKey", {
     expiresIn: "5m",
   });
+
+};
+
+const generateRefreshToken = async(user:any) => {
+  const token = jwt.sign({ id: user.id}, "myRefreshSecretKey");
   const obj = {
     user_id: user,
     token: token,
@@ -52,11 +60,10 @@ const generateAccessToken = async(user:any) => {
 
   const newDataToken = new AuthRecord(obj as any);
   await newDataToken.insertToken();
+  
   return token
-};
 
-const generateRefreshToken = (user:any) => {
-  return jwt.sign({ id: user.id}, "myRefreshSecretKey");
+
 };
 
 app.post("/api/login",async (req, res) => {
@@ -64,12 +71,11 @@ app.post("/api/login",async (req, res) => {
   const user = await UserRecord.Login(username, password)
 
   if (user) {
-    //Generate an access token
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    refreshTokens.push(refreshToken);
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+    // refreshTokens.push(refreshToken);
     res.json({
-      username: user.username,
+      userId: user,
       accessToken,
       refreshToken,
     });
@@ -88,12 +94,11 @@ app.post("/api/login",async (req, res) => {
 //   }
 // });
 
-app.delete("/api/logout", authMiddleware, (req, res) => {
-  console.log('"You almost logged out."')
-
-  const refreshToken = req.body.token;
-  refreshTokens = refreshTokens.filter(token => token !== refreshToken);
-  console.log('"You logged out successfully."')
+app.delete("/api/logout",async (req, res) => {
+  const userId = req.body.id;
+  await AuthRecord.clearTokens(userId)
+  // const refreshToken = req.body.token;
+  // refreshTokens = refreshTokens.filter(token => token !== refreshToken);
   res.status(200).json("You logged out successfully.");
 });
 
