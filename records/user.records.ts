@@ -55,9 +55,9 @@ export class UserRecord implements UserRecord {
             const match = await compare(password, results[0].password) 
              
                 if (match) {
-                    // console.log('zwracamy id!' + results[0].name, results[0].id)
+                    console.log('zwracamy id!' + results[0].name, results[0].id)
 
-                    return  results[0].name, results[0].id;
+                    return  results[0].id;
                 } else {
                     return console.log('passwords do not match');
                 }

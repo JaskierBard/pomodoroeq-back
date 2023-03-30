@@ -29,8 +29,20 @@ export class AuthRecord {
         return this.id;
     }
 
+    static async clearTokens(user_id: string): Promise<void> {
+       
+            await pool.execute("DELETE FROM `tokens` WHERE `user_id` = :user_id", {
+                user_id,
+            });
+
+            return console.log('cleared!')
+       
+    }
+
     static async refreshTokens(user_id :string): Promise<AuthRecord[]> {
-        const [results] = await pool.execute("SELECT * FROM `token` WHERE ") as AuthRecordResult;
+        const [results] = await pool.execute("SELECT * FROM `tokens` WHERE `user_id` = :user_id", {
+            user_id
+        }) as AuthRecordResult;
         return results.map(obj => new AuthRecord(obj));
     }
 }
