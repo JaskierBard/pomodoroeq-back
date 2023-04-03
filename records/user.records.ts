@@ -38,7 +38,7 @@ export class UserRecord implements UserRecord {
         return this.id;
     }
 
-  
+   
     
 
     static async listAll(): Promise<UserRecord[]> {

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { UserRecord } from "./records/user.records";
 import { AuthRecord } from "./records/auth.token";
 import { authMiddleware } from "./middleware/authMiddleware";
+import { EqRecord } from "./records/equipment.records";
 const app = express();
 
 app.use(express.json()) ;
@@ -46,7 +47,7 @@ app.post("/api/refresh", async(req, res) => {
 
 const generateAccessToken = async(user:any) => {
    return jwt.sign({ id: user}, "mySecretKey", {
-    expiresIn: "5m",
+    expiresIn: "15s",
   });
 
 };
@@ -95,6 +96,7 @@ app.post("/api/login",async (req, res) => {
 // });
 
 app.delete("/api/logout",async (req, res) => {
+  console.log('otrzymałem info')
   const userId = req.body.id;
   await AuthRecord.clearTokens(userId)
   // const refreshToken = req.body.token;
@@ -102,19 +104,19 @@ app.delete("/api/logout",async (req, res) => {
   res.status(200).json("You logged out successfully.");
 });
 
-// app.post("/api/logout", authMiddleware, (req, res) => {
-//   console.log('"You almost logged out."')
+app.patch("/api/equipment", async(req, res) => {
+  const userId = req.body.userId;
+  console.log(req.body.userId)
 
-//   const refreshToken = req.body.token;
-//   refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-//   console.log('"You logged out successfully."')
-//   res.status(200).json("You logged out successfully.");
-// });
-
-app.get("/api/admin", authMiddleware, (req, res) => {
-  console.log('dostęp!')
-  res.send('hejjj')
+  const eq = await EqRecord.getEq(userId)
+  console.log(eq)
+  res.json(eq);
 });
+
+// app.get("/api/admin", authMiddleware, (req, res) => {
+//   console.log('dostęp!')
+//   res.send('hejjj')
+// });
 
 app.post('/createUser', async (req, res) => {
   const newUser = new UserRecord(req.body);

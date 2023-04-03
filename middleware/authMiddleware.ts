@@ -6,7 +6,7 @@ export const authMiddleware = (req:any, res:any, next:any) => {
     if (authHeader) {
       const token = authHeader.split(" ")[1];
       
-      jwt.verify(token, "mySecretKey", (err:any, user:any) => {
+      jwt.verify(token, "mySecretKey", (err:any, user:any) => { //dodać secret key do process.env.ACCESS_TOKEN_SECRET i sprawdzić gitignore
         if (err) {
           return res.status(403).json("Token is not valid!");
         }
