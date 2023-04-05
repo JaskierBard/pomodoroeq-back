@@ -5,6 +5,7 @@ import { UserRecord } from "./records/user.records";
 import { AuthRecord } from "./records/auth.token";
 import { authMiddleware } from "./middleware/authMiddleware";
 import { EqRecord } from "./records/equipment.records";
+import { CustomersRecords } from "./records/customers.records";
 const app = express();
 
 app.use(express.json()) ;
@@ -122,12 +123,27 @@ app.post("/api/equipment", async(req, res) => {
 app.post('/createUser', async (req, res) => {
   const newUser = new UserRecord(req.body);
 
-  console.log(req.body + 'body')
+  console.log(newUser)
   await newUser.insertUser();
 
   res.json(newUser);
 })
 
+app.post('/api/customer', async (req, res) => {
+
+  const newCustomer = new CustomersRecords(req.body);
+  console.log(newCustomer)
+
+  await newCustomer.insert();
+
+  res.json(newCustomer);
+})
 app.listen(3001, () => console.log("Backend server is running!"));
 
+app.patch("/api/customer", async(req, res) => {
+  const userId = req.body.userId;
 
+  const customers = await CustomersRecords.getCustomers(userId)
+  console.log(customers)
+  res.json(customers);
+});
