@@ -6,6 +6,7 @@ type EqRecordResult = [EqRecord[], FieldPacket[]];
 
 export class EqRecord implements EqRecord {
     id: string;
+    money: number;
     tomato: number;
     cucumber: number
     pumpkin: number;
@@ -15,6 +16,7 @@ export class EqRecord implements EqRecord {
 
     constructor(obj:EqRecord) {
         this.id = obj.id;
+        this.money = obj.money;
         this.tomato = obj.tomato;
         this.cucumber = obj.cucumber
         this.pumpkin = obj.pumpkin;
@@ -30,6 +32,13 @@ export class EqRecord implements EqRecord {
         }) as EqRecordResult;
 
         return results.map(obj => new EqRecord(obj));
+    }
+
+    async updateSeeds(tomatoSeed: number, cucumberSeed: number, pumpkinSeed: number, value: number, id:string ): Promise<void> {
+        await pool.execute("UPDATE `user` SET `money` = money - :value, `tomatoSeed` = tomatoSeed + :tomatoSeed, `cucumberSeed` = cucumberSeed + :cucumberSeed, `pumpkinSeed` = pumpkinSeed + :pumpkinSeed WHERE `id` = :id", {
+            id, value, pumpkinSeed, cucumberSeed, tomatoSeed,
+            
+        });
     }
 
     }

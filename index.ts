@@ -87,36 +87,37 @@ app.post("/api/login",async (req, res) => {
 
 
 
-// app.delete("/api/users/:userId", verify, (req, res) => {
-//   if (req.user.id === req.params.userId || req.user.isAdmin) {
-//     res.status(200).json("User has been deleted.");
-//   } else {
-//     res.status(403).json("You are not allowed to delete this user!");
-//   }
-// });
+
 
 app.delete("/api/logout",async (req, res) => {
   console.log('otrzymałem info')
   const userId = req.body.id;
   await AuthRecord.clearTokens(userId)
-  // const refreshToken = req.body.token;
-  // refreshTokens = refreshTokens.filter(token => token !== refreshToken);
   res.status(200).json("You logged out successfully.");
 });
 
 app.patch("/api/equipment", async(req, res) => {
   const userId = req.body.userId;
-  console.log(req.body.userId)
+  // console.log(req.body.userId)
 
   const eq = await EqRecord.getEq(userId)
   console.log(eq)
   res.json(eq);
 });
 
-// app.get("/api/admin", authMiddleware, (req, res) => {
-//   console.log('dostęp!')
-//   res.send('hejjj')
-// });
+app.post("/api/equipment", async(req, res) => {
+  const { tomatoSeed, cucumberSeed, pumpkinSeed, value, userId } = req.body;
+  const eq:any = await EqRecord.getEq(userId)
+  if (value<eq[0].money) {
+    await eq[0].updateSeeds(tomatoSeed, cucumberSeed, pumpkinSeed, value, userId)
+    res.json(eq[0]);
+
+  }else {
+    console.log('masz za mało pieniędzy!')
+    res.json('masz za mało pieniędzy!')
+  }
+});
+
 
 app.post('/createUser', async (req, res) => {
   const newUser = new UserRecord(req.body);
