@@ -144,6 +144,56 @@ app.patch("/api/customer", async(req, res) => {
   const userId = req.body.userId;
 
   const customers = await CustomersRecords.getCustomers(userId)
-  console.log(customers)
   res.json(customers);
+});
+
+
+app.delete("/api/customer",async (req, res) => {
+  const { id, name, quantity, needs,  userId } = req.body;
+  const eq:any = await EqRecord.getEq(userId)
+
+  if (needs === 'tomato') {
+    if (quantity<eq[0].tomato) {
+      await eq[0].updateWegetables(needs, quantity, userId)
+      await eq[0].removeClient(id)
+      res.json(`${name} zapłacił/a za warzywa`)
+
+
+    } else {
+      console.log('masz za mało pomidorów!')
+      res.json('masz za mało pomidorów')
+
+    }
+  }
+
+  if (needs === 'cucumber') {
+    if (quantity<eq[0].cucumber) {
+      await eq[0].updateWegetables(needs, quantity, userId)
+      await eq[0].removeClient(id)
+      res.json(`${name} zapłacił/a za warzywa`)
+
+
+    } else {
+      console.log('masz za mało ogórków!')
+      res.json('masz za mało ogórków')
+
+    }
+  }
+
+  if (needs === 'pumpkin') {
+    if (quantity<eq[0].pumpkin) {
+      await eq[0].updateWegetables(needs, quantity, userId)
+      await eq[0].removeClient(id)
+      res.json(`${name} zapłacił/a za warzywa`)
+
+    } else {
+      console.log('masz za mało dyń!')
+      res.json('masz za mało dyń')
+    }
+  }
+
+ 
+
+
+  // res.status(200).json("Sprzedano.");
 });

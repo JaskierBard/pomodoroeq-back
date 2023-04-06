@@ -70,7 +70,5 @@ export class CustomersRecords implements CustomersRecords {
 
     }
 
-function uuid(): string {
-    throw new Error("Function not implemented.");
-}
+
     
