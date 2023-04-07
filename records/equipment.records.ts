@@ -69,6 +69,43 @@ export class EqRecord implements EqRecord {
         });
     }
 
+    async getReward(needs:string, userId:string ): Promise<void> {
+        this.tomato = 0
+        this.cucumber = 0, 
+        this.pumpkin = 0
+        this.tomatoSeed = 0
+        this.cucumberSeed = 0, 
+        this.pumpkinSeed = 0
+
+        if (needs === 'tomato') {
+            this.tomato = 3
+            this.tomatoSeed = 1
+        }
+        if (needs === 'cucumber') {
+            this.cucumber = 3
+            this.cucumberSeed = 1
+        }
+        if (needs === 'pumpkin') {
+            this.pumpkin = 3
+            this.pumpkinSeed = 1
+
+        }
+
+        console.log(this.tomato, this.cucumber, this.pumpkin, this.tomatoSeed, this.cucumberSeed, this.pumpkinSeed, userId)
+        await pool.execute("UPDATE `user` SET `tomato` = tomato + :tomato, `cucumber` = cucumber + :cucumber, `pumpkin` = pumpkin + :pumpkin WHERE `id` = :userId", {
+            userId,
+            tomato:this.tomato,
+            cucumber:this.cucumber,
+            pumpkin:this.pumpkin,
+        });
+        await pool.execute("UPDATE `user` SET `tomatoSeed` = tomatoSeed - :tomatoSeed, `cucumberSeed` = cucumberSeed - :cucumberSeed, `pumpkinSeed` = pumpkinSeed - :pumpkinSeed WHERE `id` = :userId", {
+            userId,
+            tomatoSeed:this.tomatoSeed,
+            cucumberSeed:this.cucumberSeed,
+            pumpkinSeed:this.pumpkinSeed,
+        });
+    }
+
     async removeClient(id: string): Promise<void> {
         await pool.execute("DELETE FROM `customers` WHERE `id` = :id", {
             id,
