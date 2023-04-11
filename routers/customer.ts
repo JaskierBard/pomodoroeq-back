@@ -9,8 +9,8 @@ customerRouter
  .post('/', async (req, res) => {
 
     const newCustomer = new CustomersRecords(req.body);
-    console.log(newCustomer)
     await newCustomer.insert();
+
     res.json(newCustomer);
   })
   

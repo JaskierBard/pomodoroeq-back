@@ -1,20 +1,21 @@
 import { FieldPacket } from "mysql2";
 import { pool } from "../utils/db";
+import { EquipmentInterface } from "../types/equipment/equipment.entity";
 
 type EqRecordResult = [EqRecord[], FieldPacket[]];
 
 
-export class EqRecord implements EqRecord {
+export class EqRecord implements EquipmentInterface {
     id: string;
     money: number;
     tomato: number;
-    cucumber: number
+    cucumber: number;
     pumpkin: number;
     tomatoSeed: number;
-    cucumberSeed: number
+    cucumberSeed: number;
     pumpkinSeed: number;
 
-    constructor(obj:EqRecord) {
+    constructor(obj:EquipmentInterface) {
         this.id = obj.id;
         this.money = obj.money;
         this.tomato = obj.tomato;
@@ -24,6 +25,7 @@ export class EqRecord implements EqRecord {
         this.cucumberSeed = obj.cucumberSeed
         this.pumpkinSeed = obj.pumpkinSeed;
     }
+   
 
     static async getEq(id:string): Promise<EqRecord[]> {
         const [results] = await pool.execute("SELECT * FROM `user` WHERE `id` = :id", {
@@ -33,12 +35,13 @@ export class EqRecord implements EqRecord {
         return results.map(obj => new EqRecord(obj));
     }
 
-    async updateSeeds(tomatoSeed: number, cucumberSeed: number, pumpkinSeed: number, value: number, id:string ): Promise<void> {
+    async updateSeeds(tomatoSeed: number =0, cucumberSeed: number=0, pumpkinSeed: number=0, value: number, id:string ): Promise<void> {
         await pool.execute("UPDATE `user` SET `money` = money - :value, `tomatoSeed` = tomatoSeed + :tomatoSeed, `cucumberSeed` = cucumberSeed + :cucumberSeed, `pumpkinSeed` = pumpkinSeed + :pumpkinSeed WHERE `id` = :id", {
             id, value, pumpkinSeed, cucumberSeed, tomatoSeed,
             
         });
     }
+  
 
     async updateWegetables(needs:string,quantity:number, userId:string ): Promise<void> {
         this.tomato = 0
@@ -91,7 +94,7 @@ export class EqRecord implements EqRecord {
 
         }
 
-        console.log(this.tomato, this.cucumber, this.pumpkin, this.tomatoSeed, this.cucumberSeed, this.pumpkinSeed, userId)
+        // console.log(this.tomato, this.cucumber, this.pumpkin, this.tomatoSeed, this.cucumberSeed, this.pumpkinSeed, userId)
         await pool.execute("UPDATE `user` SET `tomato` = tomato + :tomato, `cucumber` = cucumber + :cucumber, `pumpkin` = pumpkin + :pumpkin WHERE `id` = :userId", {
             userId,
             tomato:this.tomato,
