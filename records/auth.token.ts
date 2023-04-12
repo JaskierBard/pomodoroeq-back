@@ -4,7 +4,6 @@ import { FieldPacket } from "mysql2";
 
 type AuthRecordResult = [AuthRecord[], FieldPacket[]];
 
-
 export class AuthRecord {
     id?: string;
     user_id: string;
@@ -14,38 +13,35 @@ export class AuthRecord {
         this.id = obj.id;
         this.user_id = obj.user_id;
         this.token = obj.token
-    }
-
+    };
 
     async insertToken(): Promise<string> {
         if (!this.id) {
             this.id = uuid();
-        }
+        };
             await pool.execute("INSERT INTO `tokens`(id, user_id, token) VALUES(:id, :user_id, :token)", {
                 id: this.id,
                 user_id: this.user_id,
                 token: this.token,
             });
         return this.id;
-    }
+    };
 
     static async clearTokens(user_id: string): Promise<void> {
        
             await pool.execute("DELETE FROM `tokens` WHERE `user_id` = :user_id", {
                 user_id,
             });
-
-            return console.log('cleared!')
-       
-    }
+            return console.log('cleared!');
+    };
 
     static async refreshTokens(user_id :string): Promise<AuthRecord[]> {
         const [results] = await pool.execute("SELECT * FROM `tokens` WHERE `user_id` = :user_id", {
             user_id
         }) as AuthRecordResult;
         return results.map(obj => new AuthRecord(obj));
-    }
-}
+    };
+};
 
 
 

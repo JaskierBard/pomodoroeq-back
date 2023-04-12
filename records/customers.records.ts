@@ -2,9 +2,7 @@ import { FieldPacket } from "mysql2";
 import { pool } from "../utils/db";
 import {v4} from "uuid";
 
-
 type CustomersRecordsResults = [CustomersRecords[], FieldPacket[]];
-
 
 export class CustomersRecords implements CustomersRecords {
     id?: string;
@@ -23,24 +21,22 @@ export class CustomersRecords implements CustomersRecords {
         this.picture = obj.picture;
         this.needPicture = obj.needPicture;
         this.user_id = obj.user_id
-        
-    }
+    };
 
     async insert(): Promise<string> {
-
         if (!this.id) {
             this.id = v4();
-        }
+        };
         if (!this.needPicture) {
             this.needPicture = `./assets/images/${this.needs}.png`
-        }
+        };
         this.needPicture = `./assets/images/${this.needs}.png`
 
         if ((this.name.charAt(this.name.length - 1)) === 'a') {
             this.picture=  "./assets/images/customer2.png"
         } else {
             this.picture=  "./assets/images/customer1.png"
-        }
+        };
 
             await pool.execute("INSERT INTO `customers`(id, user_id, name, quantity, needs, picture, needPicture) VALUES(:id, :user_id, :name, :quantity, :needs, :picture, :needPicture)", {
                 id: this.id,
@@ -50,12 +46,9 @@ export class CustomersRecords implements CustomersRecords {
                 needs: this.needs,
                 picture: this.picture,
                 needPicture: this.needPicture,
-
-
             });
         return this.id;
-    }
-
+    };
 
     static async getCustomers(user_id:string): Promise<CustomersRecords[]> {
         console.log(user_id)
@@ -64,11 +57,8 @@ export class CustomersRecords implements CustomersRecords {
         }) as CustomersRecordsResults;
 
         return results.map(obj => new CustomersRecords(obj));
-    }
-
-   
-
-    }
+    };
+};
 
 
     

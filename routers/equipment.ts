@@ -1,6 +1,5 @@
 import {Router} from "express";
 import { EqRecord } from "../records/equipment.records";
-import { CustomersRecords } from "../records/customers.records";
 
 export const equipmentRouter = Router();
 
@@ -14,7 +13,6 @@ equipmentRouter
       res.json(eq[0]);
   
     }else {
-      console.log('masz za mało pieniędzy!')
       res.json('masz za mało pieniędzy!')
     }
   })
@@ -33,8 +31,6 @@ equipmentRouter
 
     await eq[0].getReward(needs, userId)
     res.json(eq[0]);
-  
-   
     }
-  )
+);
   

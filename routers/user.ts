@@ -1,6 +1,4 @@
 import {Router} from "express";
-import { EqRecord } from "../records/equipment.records";
-import { CustomersRecords } from "../records/customers.records";
 import { AuthRecord } from "../records/auth.token";
 import jwt from "jsonwebtoken";
 import { UserRecord } from "../records/user.records";
@@ -21,11 +19,8 @@ const generateAccessToken = async(user:any) => {
  
    const newDataToken = new AuthRecord(obj as any);
    await newDataToken.insertToken();
-   
    return token
- 
- 
- }
+ };
 
 
 export const userRecord = Router();
@@ -37,7 +32,6 @@ userRecord
     const userId = req.body.userId;
   
     let refreshTokens:any[] = await AuthRecord.refreshTokens(userId)
-    console.log('refreshTokens' + refreshTokens)
   
     if (!refreshToken) return res.status(401).json("You are not authenticated!");
   
@@ -52,18 +46,12 @@ userRecord
       const newAccessToken = generateAccessToken(user);
       const newRefreshToken = generateRefreshToken(user);
   
-      // refreshTokens.push(newRefreshToken);
-  
       res.status(200).json({
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
       });
     });
-  
-    //if everything is ok, create new access token, refresh token and send to user
   })
-  
-
   
   .post("/login",async (req, res) => {
     const { username, password } = req.body;
@@ -72,7 +60,6 @@ userRecord
     if (user) {
       const accessToken = await generateAccessToken(user);
       const refreshToken = await generateRefreshToken(user);
-      // refreshTokens.push(refreshToken);
       res.json({
         userId: user,
         accessToken,
@@ -83,25 +70,15 @@ userRecord
     }
   })
   
-  
-  
-  
-  
   .delete("/logout",async (req, res) => {
-    console.log('otrzymałem info')
     const userId = req.body.id;
     await AuthRecord.clearTokens(userId)
     res.status(200).json("You logged out successfully.");
   })
   
-  
-  
-  
   .post('/createUser', async (req, res) => {
     const newUser = new UserRecord(req.body);
-  
     console.log(newUser)
     await newUser.insertUser();
-  
     res.json(newUser);
   })

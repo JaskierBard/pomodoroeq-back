@@ -1,0 +1,34 @@
+Opis projektu znajduje sie na: https://github.com/JaskierBard/pomodoroeq-front
+
+potrzebne tabele w bazie pomodoroeq:
+
+CREATE TABLE `user` (
+  `id` varchar(36) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `password` varchar(80) NOT NULL,
+  `mail` varchar(50) NOT NULL,
+  `money` int(6) DEFAULT NULL,
+  `tomato` int(5) DEFAULT NULL,
+  `cucumber` int(5) DEFAULT NULL,
+  `pumpkin` int(5) DEFAULT NULL,
+  `tomatoSeed` int(5) DEFAULT NULL,
+  `cucumberSeed` int(5) DEFAULT NULL,
+  `pumpkinSeed` int(5) DEFAULT NULL,
+  `eventId` varchar(36) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `customers` (
+  `id` varchar(36) NOT NULL,
+  `name` varchar(15) NOT NULL,
+  `quantity` int(2) NOT NULL,
+  `needs` varchar(10) NOT NULL,
+  `picture` varchar(36) NOT NULL,
+  `needPicture` varchar(36) NOT NULL,
+  `user_id` varchar(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `tokens` (
+  `id` varchar(36) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `token` varchar(512) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

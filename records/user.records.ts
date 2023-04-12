@@ -4,8 +4,6 @@ import {FieldPacket} from "mysql2";
 import { hash } from 'bcrypt';
 import { compare } from 'bcrypt';
 
-
-
 type UserRecordResult = [UserRecord[], FieldPacket[]];
 
 export class UserRecord implements UserRecord {
@@ -19,12 +17,12 @@ export class UserRecord implements UserRecord {
         this.name = obj.name;
         this.mail = obj.mail
         this.password = obj.password;
-    }
+    };
 
     async insertUser(): Promise<string> {
         if (!this.id) {
             this.id = uuid();
-        }
+        };
         
         hash(this.password, 10).then(async (hash) => {
         
@@ -36,15 +34,12 @@ export class UserRecord implements UserRecord {
             });
         });
         return this.id;
-    }
-
-   
-    
+    };
 
     static async listAll(): Promise<UserRecord[]> {
         const [results] = await pool.execute("SELECT * FROM `user`") as UserRecordResult;
         return results.map(obj => new UserRecord(obj));
-    }
+    };
 
     static async Login(name: string, password: string): Promise<UserRecord | any | string> {
         try {
@@ -63,7 +58,6 @@ export class UserRecord implements UserRecord {
                 }
         } catch (error) {
             console.log(error)
-        }
-      
-          
-    }}
+        };  
+    };
+};
